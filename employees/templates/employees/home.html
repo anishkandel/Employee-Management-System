@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+    <style>/* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        /* csv.a{
+            text-decoration: none;
+            color: white;
+        }
+         */
+        .container {
+            margin: 0 auto;
+            background-color: cyan;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            height:100%;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .myheader {
+            font-size: 32px;
+            font-weight: bold;
+            color: black;
+            background: yellow;
+            padding: 10px;
+            display: inline-block;
+            border-radius: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 4px solid black;
+            width: fit-content;
+            animation: typing 4s steps(30, end) forwards, blink 0.75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: black }
+        }
+        
+        header h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+        }
+        
+        .date-time-box {
+            background-color: orange;
+            color: black;
+            font-weight: bold;
+            padding: 10px;
+            border: 3px solid black;
+            width: fit-content;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        
+        .main-layout {
+            display: flex;
+            gap: 20px;
+        }
+        
+        /* Left Side: Buttons */
+        .menu {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .menu button {
+            padding: 10px 20px;
+            background-color:brown;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .menu button:hover {
+            background-color: #45a049;
+        }
+        
+        /* Right Side: Employee Data */
+        main {
+            flex: 1;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        main h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        table th {
+            background-color: brown;
+            color: white;
+        }
+        
+        table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Dialogue Box Overlay */
+        .dialogue-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .dialogue-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        
+        .dialogue-box h2 {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .dialogue-box form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .dialogue-box form input, .dialogue-box form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .dialogue-box form button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .dialogue-box form button:hover {
+            background-color: #45a049;
+        }</style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <body>
+        <div class="container">
+            <header>
+                <h1 class="myheader">Employee Management System</h1>
+                <div class="date-time-box">
+                    <span id="date">Date: </span><br>
+                    <span id="time">Time: </span>
+                </div>
+            </header>
+    
+            <div class="main-layout">
+                <aside class="menu">
+                    <button onclick="showDialogueBox('add-employee-form')">Add Employee</button>
+                    <button onclick="showDialogueBox('search-employee-form')">Search Employee</button>
+                    <button onclick="showDialogueBox('update-employee-form')">Update Employee</button>
+                    <button onclick="refreshEmployeeList()">Show All</button>
+                    <button>
+                        <a href="{% url 'export_employees' %}" style="text-decoration: none; color: white;">Export to CSV</a>
+                    </button>
+                    
+                    <button onclick="exitApp()">7. Exit</button>
+                </aside>
+    
+                <main>
+                    <h2>Employee List</h2>
+                    <table id="employee-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Gender</th>
+                                <th>DOB</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employees %}
+                            <tr>
+                                <td>{{ employee.id }}</td>
+                                <td>{{ employee.name }}</td>
+                                <td>{{ employee.mobile }}</td>
+                                <td>{{ employee.email }}</td>
+                                <td>{{ employee.address }}</td>
+                                <td>{{ employee.gender }}</td>
+                                <td>{{ employee.dob }}</td>
+                                <td>
+                                   
+                                    <a href="{% url 'update_employee' employee.id %}">
+                                       Edit 
+                                    </a>
+
+                                    <a href="{% url 'delete_employee' employee.id %}">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </main>
+            </div>
+    
+            <!-- Dialogue Boxes -->
+            <div id="dialogue-overlay" class="dialogue-overlay">
+                <div id="add-employee-form" class="dialogue-box">
+                    <h2>Add Employee</h2>
+                    <form method="POST" action="{% url 'add_employee' %}">
+                        {% csrf_token %}
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" required>
+                        <label for="mobile">Mobile:</label>
+                        <input type="text" name="mobile" required>
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" required>
+                        <label for="address">Address:</label>
+                        <textarea name="address" required></textarea>
+                        <label for="gender">Gender:</label>
+                        <input type="text" name="gender" required>
+                        <label for="dob">DOB:</label>
+                        <input type="date" name="dob" required>
+                        <button type="submit">Add</button>
+                        <button type="button" onclick="hideDialogueBox()">Cancel</button>
+                    </form>
+                </div>
+
+                <div id="search-employee-form" class="dialogue-box">
+                    <h2>Search Employee</h2>
+                    <form method="GET" action="{% url 'search_employee' %}">
+                        <input type="text" name="search-query" placeholder="Search Employee">
+                        <button type="submit">Search</button>
+                        <button type="button" onclick="hideDialogueBox()">Cancel</button>
+                        
+                    </form>
+                </div>
+                     
+                <div id="update-employee-form" class="dialogue-box">
+                    <h2>Update Employee</h2>
+                    <form id="update-employee-form" method="POST">
+                       
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="text" id="update-id" name="employee_id"> <!-- Hidden ID Field -->
+                
+                        <label for="update-name">Name:</label>
+                        <input type="text" id="update-name" name="name">
+                
+                        <label for="update-mobile">Mobile:</label>
+                        <input type="text" id="update-mobile" name="mobile">
+                
+                        <label for="update-email">Email:</label>
+                        <input type="email" id="update-email" name="email">
+                
+                        <label for="update-address">Address:</label>
+                        <textarea id="update-address" name="address"></textarea>
+                
+                        <label for="update-gender">Gender:</label>
+                        <input type="text" id="update-gender" name="gender">
+                
+                        <label for="update-dob">Date of Birth:</label>
+                        <input type="date" id="update-dob" name="dob">
+                
+                        <button type="submit">Update</button>
+                        <button type="button" onclick="hideUpdateForm()">Cancel</button>
+                    </form>
+                </div>
+                
+                
+            </div>
+
+        </div>
+    
+        <script>
+           
+        // Function to show/hide dialogue boxes
+        function showDialogueBox(formId) {
+            const overlay = document.getElementById('dialogue-overlay');
+            overlay.style.display = 'flex';
+            const forms = document.querySelectorAll('.dialogue-box');
+            forms.forEach(form => {
+                form.style.display = 'none';
+            });
+            document.getElementById(formId).style.display = 'block';
+        }
+
+        function hideDialogueBox() {
+            document.getElementById('dialogue-overlay').style.display = 'none';
+        }
+
+        // Function to update date and time
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('date').textContent = now.toLocaleDateString();
+            document.getElementById('time').textContent = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+   
+        // Function to handle exit
+        function exitApp() {
+            if (confirm('Are you sure you want to exit?')) {
+                window.close(); // Close the window (may not work in all browsers)
+            }
+        }
+
+        // Function to refresh employee list
+        function refreshEmployeeList() {
+            // Fetch and display employee data here
+        }
+
+        // Function to export data
+        function exportData() {
+            // Export data logic here
+        }
+    </script>
+       
+    </body>
+    </html>
+    

@@ -1,0 +1,85 @@
+/* General Styles */
+body {
+    background-color: #00FFFF; /* Cyan background */
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.welcome-container {
+    padding: 20px;
+}
+
+h1 {
+    background-color: black;
+    color: cyan;
+    padding: 10px;
+    font-size: 28px;
+    text-transform: uppercase;
+    display: inline-block;
+    width: 100%;
+}
+
+h2 {
+    background-color: red;
+    color: white;
+    padding: 10px;
+    display: inline-block;
+}
+
+/* Menu Styles */
+.welcome-menu {
+    list-style: none;
+    padding: 0;
+    width: 300px;
+    margin: auto;
+}
+
+.welcome-menu li {
+    margin: 10px 0;
+}
+
+.welcome-menu a {
+    display: block;
+    background-color: darkred;
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 3px solid black;
+    text-align: center;
+}
+
+.welcome-menu a:hover {
+    background-color: red;
+}
+
+/* Header Date-Time Styles */
+.date-time-box {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: yellow;
+    padding: 10px;
+    font-weight: bold;
+    border: 2px solid black;
+}
+
+/* Database Login Button */
+.database-login {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: orange;
+    padding: 10px;
+    font-weight: bold;
+    border: 2px solid black;
+    text-decoration: none;
+    color: black;
+}
+
+.database-login:hover {
+    background-color: darkorange;
+}
