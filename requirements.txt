@@ -1,0 +1,6 @@
+Django==5.1.7
+gunicorn  # For running Django on Render
+whitenoise  # For serving static files
+psycopg2-binary  # If you plan to use PostgreSQL in production
+dj-database-url  # If using environment variables for the database
+python-decouple  # For managing environment variables
